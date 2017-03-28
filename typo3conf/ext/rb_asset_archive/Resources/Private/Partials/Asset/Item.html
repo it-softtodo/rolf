@@ -1,0 +1,26 @@
+<section class="bild_{iterator.cycle}">
+    <div class="bild_hauptbild">
+        <img src="{asset.thumbL}" alt="{asset.name}" {f:if(condition:'{asset.border}', then: 'class="inframe"')}/>
+    </div>
+    <section>
+        <div class="bild_{iterator.cycle}_title">
+            {asset.name}
+        </div>
+        <div class="jpg_print">
+            <div class="bild_jpg_print">
+                <b>JPG</b> (PRINT)
+            </div>
+            <div class="bild_download_print">
+                <a href="{asset.large}" download="{asset.name} (Print).jpg">DOWNLOAD &gt;&gt;</a>
+            </div>
+        </div>
+        <div class="jpg_web">
+            <div class="bild_jpg_web">
+                <b>JPG</b> (WEB)
+            </div>
+            <div class="bild_download_web">
+                <a href="{asset.large540}" download="{asset.name} (Web).jpg">DOWNLOAD &gt;&gt;</a>
+            </div>
+        </div>
+    </section>
+</section>

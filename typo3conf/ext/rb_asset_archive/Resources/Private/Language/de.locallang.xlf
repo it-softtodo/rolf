@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="default" target-language="de" datatype="plaintext" original="messages" date="2013-08-19T13:21:36Z" product-name="rb_asset_archive">
+        <header/>
+        <body>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset">
+                <target>Asset</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset.name">
+                <target>name</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset.active">
+                <target>active</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset.image">
+                <target>image</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset.date">
+                <target>date</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset.country">
+                <target>country</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive_domain_model_asset.brand">
+                <target>brand</target>
+            </trans-unit>
+               <trans-unit id="tx_rbassetarchive_domain_model_asset.bildtyp">
+                <target>Bildtyp</target>
+            </trans-unit>
+
+            <trans-unit id="tx_rbassetarchive.form.pls_choose">
+                <target>Bitte wählen</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.all">
+                <target>Alle</target>
+            </trans-unit>
+
+            <trans-unit id="tx_rbassetarchive.types.1">
+                <target>Pressemitteilungen</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.types.2">
+                <target>Bilder</target>
+            </trans-unit>
+
+            <trans-unit id="tx_rbassetarchive.form.label.type">
+                <target>Sie suchen</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.label.period">
+                <target>Zeitraum</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.label.period_from">
+                <target>von</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.label.period_to">
+                <target>bis</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.all_themes">
+                <target>Alle</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.label.theme">
+                <target>Programme</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.label.keyword">
+                <target>Suchbegriff</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.form.button.search">
+                <target>SUCHEN</target>
+            </trans-unit>
+
+            <!-- News-Detail -->
+            <trans-unit id="tx_rbassetarchive.news.more_assets">
+                <target>Weitere Bilder zu</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.asset_archive">
+                <target>BILDARCHIV</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.additional_information">
+                <target>Weitere Informationen</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.mr">
+                <target>Herr</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.ms">
+                <target>Frau</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.phone">
+                <target>Fon</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.fax">
+                <target>Fax</target>
+            </trans-unit>
+            <trans-unit id="tx_rbassetarchive.news.email">
+                <target>E-Mail</target>
+            </trans-unit>
+
+            <trans-unit id="tx_rbassetarchive.news_archive.more">
+                <target>MEHR</target>
+            </trans-unit>
+
+            <!-- Allgemein -->
+            <trans-unit id="tx_rbassetarchive.misc.no_result">
+                <target>Ihre Anfrage liefert kein Ergebnis.</target>
+            </trans-unit>
+
+            <!-- Themen-Bereiche f. Select-Menü -->
+            <trans-unit id="Neuheiten">
+                <target>Neuheiten</target>
+            </trans-unit>
+            <trans-unit id="Sofas">
+                <target>Sofas</target>
+            </trans-unit>
+            <trans-unit id="Sessel">
+                <target>Sessel</target>
+            </trans-unit>
+            <trans-unit id="Couchtische">
+                <target>Couchtische</target>
+            </trans-unit>
+            <trans-unit id="Teppiche">
+                <target>Teppiche</target>
+            </trans-unit>
+            <trans-unit id="Accessoires">
+                <target>Accessoires</target>
+            </trans-unit>
+            <trans-unit id="Stühle">
+                <target>Stühle</target>
+            </trans-unit>
+            <trans-unit id="Esstische">
+                <target>Esstische</target>
+            </trans-unit>
+            <trans-unit id="Wissenswertes">
+                <target>Wissenswertes</target>
+            </trans-unit>
+            <trans-unit id="Unternehmen">
+                <target>Unternehmen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
