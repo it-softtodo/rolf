@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="default" datatype="plaintext" original="messages" date="2013-08-19T13:21:36Z" product-name="rb_asset_archive">
+    		<header/>
+    		<body>
+                <trans-unit id="pages.tabs.images">
+                    <source>Bilder</source>
+                </trans-unit>
+            </body>
+	</file>
+    <file source-language="en" datatype="plaintext" original="messages" date="2013-08-19T13:21:36Z" product-name="rb_asset_archive">
+    		<header/>
+    		<body>
+                <trans-unit id="pages.tabs.images">
+                    <source>Images</source>
+                </trans-unit>
+            </body>
+	</file>
+</xliff>

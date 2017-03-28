@@ -1,0 +1,5 @@
+<f:widget.paginate objects="{news}" as="paginatedNews" configuration="{insertBelow: 1, itemsPerPage: 15}">
+    <f:for each="{paginatedNews}" as="newsItem">
+        <f:render partial="NewsArchive/Item.html" arguments="{newsItem: newsItem}" />
+    </f:for>
+</f:widget.paginate>

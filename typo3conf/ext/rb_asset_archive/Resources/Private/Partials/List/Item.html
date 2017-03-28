@@ -1,0 +1,63 @@
+{namespace n=Tx_News_ViewHelpers}
+<!--
+	=====================
+		Partials/List/Item.html
+-->
+<article class="Pressemitteilung_Listenansicht">
+    <section class="Pressemitteilung_Listenansicht_Links">
+        <section class="logo_datum">
+            <div class="logo_rb">
+                <f:if condition="{0: newsItem.brand.title} == {0: 'Rolf Benz'}">
+                    <f:then>
+                        <f:image src="EXT:rb_asset_archive/Resources/Public/Logos/RB_Logo_schwarz.jpg" alt="Logo Rolf Benz" />
+                    </f:then>
+                    <f:else>
+                        <f:image src="EXT:rb_asset_archive/Resources/Public/Logos/Freistil_Logo_schwarz.png" alt="Logo freistil" />
+                    </f:else>
+                </f:if>
+            </div>
+            <div class="datum">
+                <p><n:format.date format="{f:translate(key:'dateFormat')}">{newsItem.datetime}</n:format.date></p>
+            </div>
+        </section>
+        <section class="text_pressemitteilung">
+            <n:link newsItem="{newsItem}" settings="{settings}"><h3>{newsItem.title}</h3></n:link>
+            <p class="teasertext">
+                {newsItem.teaser}
+            </p>
+            <f:format.html><f:format.crop maxCharacters="{settings.cropMaxCharacters}" respectWordBoundaries="true" append=" ...">{newsItem.bodytext}</f:format.crop></f:format.html>
+
+            <p class="mehr_button">
+                <n:link newsItem="{newsItem}" settings="{settings}" class="more"><f:translate key="LLL:EXT:rb_asset_archive/Resources/Private/Language/locallang.xlf:tx_rbassetarchive.news_archive.more"/> >></n:link>
+            </p>
+        </section>
+    </section>
+    <section class="Pressemitteilung_Leerraum"></section>
+
+
+	<f:if condition="{newsItem.assets}">
+        <f:alias map="{mainAsset: newsItem.assetArray.0}">
+        <section class="Pressemitteilung_Listenansicht_Rechts">
+            <div class="thumbnails_gross">
+                <n:link newsItem="{newsItem}" settings="{settings}">
+                    <f:image src="uploads/tx_rbassetarchive/thumb_l/{newsItem.assetArray.0.basicFileName}_thumb_l.jpg" additionalAttributes="{class: 'thumbnail_groesse{f:if(condition:\'{newsItem.assetArray.0.border}\', then: \' inframe\')}'}" alt="{newsItem.assetArray.0.name}" />
+                </n:link>
+            </div>
+            <section class="thumbnails_klein">
+                <f:for each="{newsItem.assets}" as="asset" iteration="assetIterator">
+                    <f:if condition="{assetIterator.cycle} > 1">
+                        <div class="thumbnail_bild1">
+                            <n:link newsItem="{newsItem}" settings="{settings}">
+                                <f:image src="uploads/tx_rbassetarchive/thumb_s/{asset.basicFileName}_thumb_s.jpg" alt="{asset.name}" additionalAttributes="{class: '{f:if(condition:\'{asset.border}\', then: \'inframe\')}'}" />
+                            </n:link>
+                        </div>
+                    </f:if>
+                </f:for>
+            </section>
+            <section>
+                <div class="space_news">&nbsp;</div>
+            </section>
+        </section>
+        </f:alias>
+	</f:if>
+</article>

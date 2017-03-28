@@ -1,0 +1,29 @@
+<section class="detailansicht_rechts">
+    <f:for each="{newsItem.assets}" as="asset" iteration="assetIterator">
+    <section class="bild_rechts_{assetIterator.cycle}">
+        <div class="bild_rechts_hauptbild">
+            <f:image src="uploads/tx_rbassetarchive/thumb_l/{asset.basicFileName}_thumb_l.jpg" alt="{asset.name}" additionalAttributes="{class: '{f:if(condition:\'{asset.border}\', then: \'inframe\')}'}"/>
+        </div>
+        <f:if condition="{asset.active}">
+        <section>
+            <div class="jpg_print">
+                <div class="bild_jpg_print">
+                    <b>JPG</b> (PRINT)
+                </div>
+                <div class="bild_download_print">
+                    <a href="uploads/tx_rbassetarchive/large/{asset.basicFileName}_large.jpg" download="{asset.name} (Print).jpg">DOWNLOAD &gt;&gt;</a>
+                </div>
+            </div>
+            <div class="jpg_web">
+                <div class="bild_jpg_web">
+                    <b>JPG</b> (WEB)
+                </div>
+                <div class="bild_download_web">
+                    <a href="uploads/tx_rbassetarchive/large_width540/{asset.basicFileName}_large_width540.jpg" download="{asset.name} (Web).jpg">DOWNLOAD &gt;&gt;</a>
+                </div>
+            </div>
+        </section>
+        </f:if>
+    </section>
+    </f:for>
+</section>
