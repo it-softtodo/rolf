@@ -1,5 +1,0 @@
-## Define custom categories
-# customsubcategory=rolf_benz_cat=Rolf Benz Archiv-Einstellungen
-
-    # cat=basic/rolf_benz_cat; type=int+; label=Max. Anzahl Bilder
-maxImages = 34
