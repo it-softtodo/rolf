@@ -49,7 +49,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
      */
     public function filterAssets($arguments) {
 
-        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de"){
+        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local"){
 
             return $this->msFilterAssets($arguments);
 
@@ -175,7 +175,6 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
         while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
             $allCategories[] = $row;
         }
-
         return $allCategories;
 
     }
@@ -215,7 +214,10 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
                 $i++;
             }
         }
-        
+
+
+
+
 
         $children = array();
         $theme_children = array();
@@ -277,7 +279,6 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
         $children = array_merge($theme_children,$bildtyp_children);
 
 
-
         if($themeIsFalse OR $bildtypIsFalse){
             if (!empty($stringids)) {
              $stringids.=",";
@@ -296,7 +297,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
            }
            $i++;
        }
-//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($assetsids);
+
 
         $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
             "a.*, COUNT(*) as nbre",
@@ -308,7 +309,6 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
             $allCategories[] = $row["uid"];
         }
         
-
         $assetsids="";
         $i = 0;
         $len = count($allCategories);
@@ -325,100 +325,117 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
         $assets = array();
 
+        if(!empty($allCategories)) {
+            if ($themeIsFalse and $bildtypIsFalse) {
 
-        if ($themeIsFalse and $bildtypIsFalse) {
+                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+                    "DISTINCT a.*",
+                    "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p ",
+                    "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND p.uid_local IN($assetsids) ORDER BY 1 DESC ");
 
-            $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-                "DISTINCT a.*",
-                "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p ",
-                "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND p.uid_local IN($assetsids) ORDER BY 1 DESC ");
+                $allCategories = array();
+                while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+                    $allCategories[] = $row["uid"];
+                }
 
-            $allCategories = array();
-            while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-                $allCategories[] = $row["uid"];
-            }
+                $assets = array();
+                $assetUids = array();
 
-            $assets = array();
+                foreach ($allCategories as $category) {
+                    $asset = $this->findByUid($category);
+                    $assets[] = $asset;
+                    $assetUids[] = $asset->getUid();
+                }
 
-            foreach($allCategories as $category){
-                
-                $assets[] = $this->findByUid($category);
-            }
+            } elseif (!$themeIsFalse and !$bildtypIsFalse) {
 
-        }elseif (!$themeIsFalse and !$bildtypIsFalse) {
-
-            $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-            "DISTINCT a.*",
-            "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p, tx_rbassetarchive_domain_model_asset_programm_mm ap ",
-            "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND a.uid = ap.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[0] AND ap.uid_foreign = $ids[1] ORDER BY 1 DESC ");
+                $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+                    "DISTINCT a.*",
+                    "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p, tx_rbassetarchive_domain_model_asset_programm_mm ap ",
+                    "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND a.uid = ap.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[0] AND ap.uid_foreign = $ids[1] ORDER BY 1 DESC ");
 
 //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($res);
-            $allCategories = array();
-            while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-                $allCategories[] = $row["uid"];
-            }
-
-            //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($stringids);
-
-            foreach($allCategories as $category){
-                
-                $assets[] = $this->findByUid($category);
-            }
-
-            
-
-        }elseif ($themeIsFalse or $bildtypIsFalse) {
-
-
-
-            if($themeIsFalse){
-                
-                 $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-                "DISTINCT a.*",
-                "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p ",
-                "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[0] ORDER BY 1 DESC ");
-
                 $allCategories = array();
                 while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
                     $allCategories[] = $row["uid"];
                 }
 
-                $assets = array();
+                //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($stringids);
 
-                foreach($allCategories as $category){
-                    
-                    $assets[] = $this->findByUid($category);
-                }
-            }else{
-
-                
-
-                 $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-                "DISTINCT a.*",
-                "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p ",
-                "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[1] ORDER BY 1 DESC ");
-
-                $allCategories = array();
-                while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
-                    $allCategories[] = $row["uid"];
+                foreach ($allCategories as $category) {
+                    $asset = $this->findByUid($category);
+                    $assets[] = $asset;
+                    $assetUids[] = $asset->getUid();
                 }
 
-                $assets = array();
 
-                foreach($allCategories as $category){
-                    
-                    $assets[] = $this->findByUid($category);
+            } elseif ($themeIsFalse or $bildtypIsFalse) {
+
+
+                if ($themeIsFalse) {
+
+                    $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+                        "DISTINCT a.*",
+                        "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p ",
+                        "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[0] ORDER BY 1 DESC ");
+
+                    $allCategories = array();
+                    while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+                        $allCategories[] = $row["uid"];
+                    }
+
+                    $assets = array();
+                    $assetUids = array();
+
+                    foreach ($allCategories as $category) {
+                        $asset = $this->findByUid($category);
+                        $assets[] = $asset;
+                        $assetUids[] = $asset->getUid();
+                    }
+                } else {
+
+
+                    $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+                        "DISTINCT a.*",
+                        "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p ",
+                        "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[1] ORDER BY 1 DESC ");
+
+                    $allCategories = array();
+                    while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
+                        $allCategories[] = $row["uid"];
+                    }
+
+                    $assets = array();
+                    $assetUids = array();
+
+                    foreach ($allCategories as $category) {
+                        $asset = $this->findByUid($category);
+                        $assets[] = $asset;
+                        $assetUids[] = $asset->getUid();
+                    }
                 }
+
+            }
+
+            $assetsObject = NULL;
+            if(!empty($assetUids)){
+                $assetsObject = $this->findAssetsByUids($assetUids);
             }
 
         }
 
 
+//         \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($assetsObject);
+        return $assetsObject;
 
-        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($assets);
-        return $assets;
+
+    }
 
 
+    public function findAssetsByUids(array $uids) {
+        $query = $this->createQuery();
+        $query->matching($query->in('uid', $uids));
+        return $query->execute();
     }
 
 
