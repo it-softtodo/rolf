@@ -198,7 +198,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             } else { // Paginating aktiv
 
                 $searchArguments = array('type');
-
                 foreach ($searchArguments as $argument) {
                     $this->request->setArgument($argument, $_SESSION['arguments'][$argument]);
                 }
@@ -213,7 +212,8 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                         $news = $this->listNews();
                         break;
                     case 2:
-                        $assets = $assets;
+                        //$assets = $assets;
+                        $assets = $this->listAssets();
                         $firstvisit = 0;
                         break;
                     default:
@@ -306,6 +306,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
 
         $countthemes = count($misHS_themes);
+        //var_dump($countthemes);
 
         for ($i= 1 ; $i < $countthemes ; $i++) {
 
