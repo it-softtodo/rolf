@@ -601,7 +601,8 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
         }
 
-        $join = ' JOIN tx_news_domain_model_news_programm_mm np ON c.uid = np.uid_foreign';
+//        $join = ' JOIN tx_news_domain_model_news_programm_mm np ON c.uid = np.uid_foreign';
+        $join = '';
         $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
             'c.*',
             $categoryTable.' c'.$join,

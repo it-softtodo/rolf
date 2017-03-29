@@ -49,7 +49,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
      */
     public function filterAssets($arguments) {
 
-        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local"){
+        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local" || $_SERVER['HTTP_HOST'] == "hulsta-sofa.local" ){
 
             return $this->msFilterAssets($arguments);
 
@@ -424,9 +424,13 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
         }
 
+        if($_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local"){
+            return $assetsObject;
+        }else{
+            return $assets;
+        }
 
-//         \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($assetsObject);
-        return $assetsObject;
+
 
 
     }
