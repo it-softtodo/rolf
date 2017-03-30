@@ -45,20 +45,22 @@ Otherwise your changes will be overwritten the next time you save the extension 
                 <f:form.select id="periodToYear" name="periodToYear" options="{periodToYear}" value="{arguments.periodToYear}" />
             </div>
         </div>
+
         <div class="bereiche">
+
             <div class="bereiche_text">
                 <f:translate key="tx_rbassetarchive.form.label.theme" />:
             </div>
             <div class="bereiche_auswahl">
                 <select id="theme" name="tx_rbassetarchive_pi1[theme]">
                     <f:for each="{themes}" as="theme">
-                        <f:if condition="{theme.id} == {arguments.theme}">
-                            <f:then>
-                                <option value="{theme.id}" selected="selected" style="padding-left: {theme.level}px" {theme.status}>{theme.title}</option>
-                            </f:then>
-                            <f:else>
-                                <option value="{theme.id}" style="padding-left: {theme.level}px" {theme.status}>{theme.title}</option>
-                            </f:else>
+                        <f:if condition="{theme.id} == {id}">
+                                <f:then>
+                                    <option value="{theme.id}" selected="selected" style="padding-left: {theme.level}px" {theme.status}>{theme.title}</option>
+                                </f:then>
+                                <f:else>
+                                    <option value="{theme.id}" style="padding-left: {theme.level}px" {theme.status}>{theme.title}</option>
+                                </f:else>
                         </f:if>
                     </f:for>
                 </select>

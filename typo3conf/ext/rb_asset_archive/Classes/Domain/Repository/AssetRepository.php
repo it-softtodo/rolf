@@ -51,6 +51,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
         if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local" || $_SERVER['HTTP_HOST'] == "hulsta-sofa.local" ){
 
+
             return $this->msFilterAssets($arguments);
 
         }else{
@@ -75,7 +76,6 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
             if ($arguments['theme']) {
                 $categoryService = GeneralUtility::makeInstance('Tx_News_Service_CategoryService');
                 $themesList = $categoryService::getChildrenCategories($arguments['theme']);
-
                 $or = array();
                 foreach (GeneralUtility::intExplode(',', $themesList) as $theme) {
                     $or[] = $query->contains('programms', $theme);
@@ -107,6 +107,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
                 $or = array();
                 //foreach ($arguments['bildtyp'] as $bildtyp) {
                     $or[] = $query->equals('bildtyp', $arguments['bildtyp']);
+
                 //}
                 $and[] = $query->logicalOr($or);
             }
@@ -132,17 +133,16 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
         $query = $this->createQuery();
         $and = array();
         $and[] = $query->equals('active', 1);
-        
-
+        $id=$_SESSION["id"];
         $themes = array();
         $or = array();
-
+        $arguments['theme'] = $id;
         $themes[] = $arguments['bildtyp'];
         $themes[] = $arguments['theme'];
         $or[] = $query->in('programms', $themes);
         $and[] = $query->logicalOr($or);
 
-        if ($arguments["theme"] AND $arguments["bildtyp"]) {
+         if ($arguments["theme"] AND $arguments["bildtyp"]) {
 
             return $this->getresultsByCategories($themes);
 
@@ -153,8 +153,6 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
         }else{
             return $this->getresultsByCategories($themes,true,true);
         }
-
-
         //return $this->getresultsByCategories($themes, $themeIsFalse = false, $bildtypIsFalse = false);
 
     }
@@ -354,7 +352,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
                     "tx_rbassetarchive_domain_model_asset a, tx_rbassetarchive_domain_model_asset_programm_mm p, tx_rbassetarchive_domain_model_asset_programm_mm ap ",
                     "a.deleted=0 AND a.hidden=0 AND a.uid = p.uid_local AND a.uid = ap.uid_local AND p.uid_local IN($assetsids) AND p.uid_foreign = $ids[0] AND ap.uid_foreign = $ids[1] ORDER BY 1 DESC ");
 
-//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($res);
+              //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($res);
                 $allCategories = array();
                 while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
                     $allCategories[] = $row["uid"];
@@ -407,6 +405,7 @@ class AssetRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
                     $assets = array();
                     $assetUids = array();
+
 
                     foreach ($allCategories as $category) {
                         $asset = $this->findByUid($category);

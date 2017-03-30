@@ -71,6 +71,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     private static $brands = array('checkbox_rb' => 1, 'checkbox_fs' => 2);
 
+
     public function initializeAction() {
         session_start();
         parent::initializeAction();
@@ -118,7 +119,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
         // Alles unterhalb von Marken
         $themes = array_merge($themes, $this->getCategories($this->settings['brandsId']));
-
         // Übersetzungen einfügen
         foreach ($themes as $key => $theme) {
             $title = $theme['title'];
@@ -137,6 +137,8 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         $this->view->assign('periodToYear', $periodToYear);
 
 
+
+
         if (array_key_exists('tx_rb_asset_archive_pi1', $_GET) && array_key_exists('more', $_GET['tx_rb_asset_archive_pi1'])) {
             $this->request->setArgument('type', $_GET['tx_rb_asset_archive_pi1']['type']);
             $this->request->setArgument('theme', $_GET['tx_rb_asset_archive_pi1']['theme']);
@@ -146,65 +148,32 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
         $this->view->assign('themes', $themes);
 
-        
-
-        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de"){
-
+        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local" || $_SERVER['HTTP_HOST'] == "hulsta-sofa.local") {
             $this->msSearchAction();
+            // sesion vide
+            $curent= $this->request->getArguments();
+            if(!$curent['action']){
+                $id = 0;
+                $_SESSION['id'] = $id;
+                $this->view->assign('id', $_SESSION['id']);
+            }
 
         }
-        if ($this->request->getMethod() == 'POST') {
-            unset($_SESSION['arguments']);
-			$firstvisit = 0;
-            // Wird nach Bilder oder Pressemitteilungen gesucht
-            $type = $this->request->getArgument('type');
 
-
-            // Region anhand der Sprache setzen
-            if ($GLOBALS['TSFE']->sys_language_uid != 0) {
-                $this->request->setArgument('country', self::getRegionBySyslanguageUid($GLOBALS['TSFE']->sys_language_uid));
-            }
-
-            $this->request->setArgument('brands', self::getBrands());
-
-            $news = array();
-            $assets = array();
-            switch ($type) {
-                case 1:
-                    $news = $this->listNews();
-                    break;
-                case 2:
-                    $assets = $this->listAssets();
-                    break;
-                default:
-                    $this->redirect('search');
-            }
-
-
-            $this->view->assign('news', $news);
-            $this->view->assign('assets', $assets);
-            $this->view->assign('firstvisit', $firstvisit);
-            $this->view->assign('arguments', $this->request->getArguments());
-
-            $_SESSION['arguments'] = $this->request->getArguments();
-
-        } else {
-            // Default-Ansicht (keine Parameter in Query)
-
-            if ((count($this->request->getArguments()) == 0 || !$this->request->hasArgument('type')) && count($_SESSION['arguments']) == 0) {
-                $news = $this->listDefaultNews();
-                $this->view->assign('news', $news);
-
-            } else { // Paginating aktiv
-
-                $searchArguments = array('type');
-                foreach ($searchArguments as $argument) {
-                    $this->request->setArgument($argument, $_SESSION['arguments'][$argument]);
-                }
-
+            if ($this->request->getMethod() == 'POST') {
+                unset($_SESSION['arguments']);
+                $firstvisit = 0;
                 // Wird nach Bilder oder Pressemitteilungen gesucht
                 $type = $this->request->getArgument('type');
 
+                // Region anhand der Sprache setzen
+                if ($GLOBALS['TSFE']->sys_language_uid != 0) {
+                    $this->request->setArgument('country', self::getRegionBySyslanguageUid($GLOBALS['TSFE']->sys_language_uid));
+                }
+                $this->request->setArgument('brands', self::getBrands());
+                // recover the id of filters
+                $id = $this->request->getArgument('theme');
+                $_SESSION['id'] = $id;
                 $news = array();
                 $assets = array();
                 switch ($type) {
@@ -212,20 +181,65 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                         $news = $this->listNews();
                         break;
                     case 2:
-                        //$assets = $assets;
                         $assets = $this->listAssets();
-                        $firstvisit = 0;
                         break;
                     default:
                         $this->redirect('search');
                 }
-
+                
+                $this->view->assign('id', $_SESSION['id']);
                 $this->view->assign('news', $news);
                 $this->view->assign('assets', $assets);
                 $this->view->assign('firstvisit', $firstvisit);
                 $this->view->assign('arguments', $this->request->getArguments());
+
+                $_SESSION['arguments'] = $this->request->getArguments();
+
+            } else {
+                // Default-Ansicht (keine Parameter in Query)
+
+                if ((count($this->request->getArguments()) == 0 || !$this->request->hasArgument('type')) && count($_SESSION['arguments']) == 0) {
+                    $news = $this->listDefaultNews();
+                    $this->view->assign('news', $news);
+
+                } else { // Paginating aktiv
+
+                    $searchArguments = array('type');
+                    foreach ($searchArguments as $argument) {
+                        $this->request->setArgument($argument, $_SESSION['arguments'][$argument]);
+
+                    }
+                    // Wird nach Bilder oder Pressemitteilungen gesucht
+                    $type = $this->request->getArgument('type');
+                    // recover the id of filters in pagination
+                    $id = $_SESSION["id"];
+                    $news = array();
+
+                    $assets = array();
+                    switch ($type) {
+                        case 1:
+                            $news = $this->listNews();
+                            break;
+                        case 2:
+                            //$assets = $assets;
+                            $assets = $this->listAssets();
+                            $firstvisit = 0;
+                            break;
+                        default:
+                            $this->redirect('search');
+                    }
+                    //$this->request->getArguments();
+                    $this->view->assign('id', $id);
+                    $this->view->assign('news', $news);
+                    $this->view->assign('assets', $assets);
+                    $this->view->assign('firstvisit', $firstvisit);
+                    $this->view->assign('arguments', $this->request->getArguments());
+
+                    $_SESSION['arguments'] = $this->request->getArguments();
+
+                }
             }
-        } 
+
     }
 
     /**
@@ -235,12 +249,12 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     private function msSearchAction(){
 
+
         $firstvisit = 1;
         $misHS_themes = array();
         $misHS_themes[] = array('title' => LocalizationUtility::translate('tx_rbassetarchive.form.all_themes', $this->extensionName),
                           'id' => 0,
                           'level' => 0);
-
         // Alles unterhalb von Marken
         if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com"){
             $misHS_themes = array_merge($misHS_themes, $this->findChildren($this->settings['MisHS']["value"]));
@@ -254,9 +268,11 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
             
         }
+
         // Übersetzungen einfügen
         foreach ($misHS_themes as $key => $theme) {
             $title = $theme['title'];
+
             $localizedTitle = LocalizationUtility::translate($title, $this->extensionName);
             if (!empty($localizedTitle)) {
                 $title = $localizedTitle;
@@ -274,11 +290,14 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
         foreach ($markens_brands as $key => $theme) {
             $title = $theme['title'];
+
             $localizedTitle = LocalizationUtility::translate($title, $this->extensionName);
             if (!empty($localizedTitle)) {
                 $title = $localizedTitle;
             }
             $markens_brands[$key]['title'] = '- '.$title;
+
+
         }
 
 
@@ -296,7 +315,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
             $bildtyps[$key]['title'] = '- '.$title;
         }
-
 
 
         $this->view->assign('markens_brands', $markens_brands);
@@ -413,11 +431,8 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
 
     private  function listAssets() {
-
         //var_dump($this->request->getArguments());
-
         $assets = $this->assetRepository->filterAssets($this->request->getArguments());
-
         foreach ($assets as $asset) {
             $fileInfo = \TYPO3\CMS\Core\Utility\GeneralUtility::split_fileref($asset->getImage());
             $orgFileName = preg_replace('/_[0-9][0-9]$/', '', $fileInfo['filebody']).'_';
@@ -525,7 +540,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
         }
 
-        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($allParentCategs);
 
         $finalCategs = array();
 
@@ -547,8 +561,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
         }
 
-        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($finalCategs);
-        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($allCategories);
         return $finalCategs;
 
     }
