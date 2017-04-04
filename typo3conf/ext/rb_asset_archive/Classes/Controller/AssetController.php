@@ -71,6 +71,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     private static $brands = array('checkbox_rb' => 1, 'checkbox_fs' => 2);
 
+    private static $parentid ;
 
     public function initializeAction() {
         session_start();
@@ -117,8 +118,12 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                           'id' => 0,
                           'level' => 0);
 
-        // Alles unterhalb von Marken
-        $themes = array_merge($themes, $this->getCategories($this->settings['brandsId']));
+        // convert parentid to integer
+        self::$parentid = intval($this->settings['brandsId']);
+        // recover all category
+        $themes = array_merge($themes, $this->getCategories(self::$parentid));
+
+
         // Übersetzungen einfügen
         foreach ($themes as $key => $theme) {
             $title = $theme['title'];
@@ -146,10 +151,11 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         }
 
 
-        $this->view->assign('themes', $themes);
+
+            $this->view->assign('themes', $themes);
 
         if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "portal.rolf-benz.matrix.de" || $_SERVER['HTTP_HOST'] == "rolf-benz.local" || $_SERVER['HTTP_HOST'] == "hulsta-sofa.local") {
-            $this->msSearchAction();
+            //$this->msSearchAction();
             // sesion vide
             $curent= $this->request->getArguments();
             if(!$curent['action']){
@@ -186,7 +192,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                     default:
                         $this->redirect('search');
                 }
-                
+
                 $this->view->assign('id', $_SESSION['id']);
                 $this->view->assign('news', $news);
                 $this->view->assign('assets', $assets);
@@ -256,29 +262,34 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                           'id' => 0,
                           'level' => 0);
         // Alles unterhalb von Marken
-        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com"){
+        if($_SERVER['HTTP_HOST'] == "mis.huelsta-sofa.com" || $_SERVER['HTTP_HOST'] == "mis.huelsta.local"){
+
+            // recover categories of parent 297 Sofas,hs.400,hs.430,hs.432,hs.450,hs.462,hs.480,hs.490,Accessoires,hs.499)
+
             $misHS_themes = array_merge($misHS_themes, $this->findChildren($this->settings['MisHS']["value"]));
+
         }else{
             $pageid = intval($GLOBALS['TSFE']->id);
+
             if($pageid == $this->settings['RBPID']["value"]){
                 $misHS_themes = array_merge($misHS_themes, $this->findChildren($this->settings['RB']["value"]));
-
             }else{
                 $misHS_themes = array_merge($misHS_themes, $this->findChildren($this->settings['Freistil']["value"]));
             }
             
-        }
-
+       }
         // Übersetzungen einfügen
         foreach ($misHS_themes as $key => $theme) {
             $title = $theme['title'];
-
             $localizedTitle = LocalizationUtility::translate($title, $this->extensionName);
             if (!empty($localizedTitle)) {
                 $title = $localizedTitle;
             }
             $misHS_themes[$key]['title'] = '- '.$title;
+
+
         }
+        $this->view->assign('themes', $misHS_themes);
 
         //$this->view->assign('types', $types);
 
@@ -297,7 +308,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
             $markens_brands[$key]['title'] = '- '.$title;
 
-
         }
 
 
@@ -306,7 +316,6 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             'level' => 0);
 
         $bildtyps = array_merge($bildtyps, $this->assetRepository->getResultsByParentId($this->settings['bildtypId']));
-
         foreach ($bildtyps as $key => $theme) {
             $title = $theme['title'];
             $localizedTitle = LocalizationUtility::translate($title, $this->extensionName);
@@ -314,6 +323,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                 $title = $localizedTitle;
             }
             $bildtyps[$key]['title'] = '- '.$title;
+
         }
 
 
@@ -327,7 +337,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         //var_dump($countthemes);
 
         for ($i= 1 ; $i < $countthemes ; $i++) {
-
+                
             if ($misHS_themes[$i]["isparent"]== 1) {
 
                 $misHS_themes[$i]["level"] = 25;
@@ -546,7 +556,8 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         foreach ($allParentCategs as $key => $value) {
 
             $res = $GLOBALS['TYPO3_DB']->sql_query('SELECT * from '.$categoryTable.' WHERE uid = '.$value["uid"] . ' AND deleted=0 AND hidden=0 UNION SELECT * FROM '.$categoryTable.' WHERE parent = '.$value["uid"].' AND deleted=0 AND hidden=0');
-            
+
+
             while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
                 $finalCategs[] = $row;
             }
@@ -586,13 +597,15 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
             '*',
             $categoryTable,
-            'deleted=0 AND hidden=0' . $additionalWhere,
+            'deleted=0 AND hidden=0'. $additionalWhere,
             'sorting');
 
         $allCategories = array();
         while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))) {
             $allCategories[] = $row;
         }
+        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($allCategories);
+
 
         $tree = $this->buildTree($allCategories, $pid);
 
@@ -606,6 +619,7 @@ class AssetController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             }
             if ($key == 'title') {
                 $temp['title'] = $value;
+
             }
             if ($key == 'level') {
                 $titles[$temp['uid']] = $temp['title'];
